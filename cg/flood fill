@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <graphics.h>
+#include <dos.h>
+
+/*
+ * Flood Fill Algorithm (Recursive, 4-connected)
+ * Replaces all pixels of 'old_color' connected to (x, y)
+ * with 'new_color' — does NOT rely on a boundary color.
+ */
+void floodFill4(int x, int y, int old_color, int new_color) {
+    if (getpixel(x, y) == old_color) {
+        putpixel(x, y, new_color);
+        delay(1); /* Small delay so you can watch the fill spread */
+
+        floodFill4(x + 1, y,     old_color, new_color);
+        floodFill4(x - 1, y,     old_color, new_color);
+        floodFill4(x,     y + 1, old_color, new_color);
+        floodFill4(x,     y - 1, old_color, new_color);
+    }
+}
+
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, "C:\\TURBOC3\\BGI");
+
+    /* Draw a filled polygon shape using line() to create a closed region */
+    setcolor(YELLOW);
+    /* Triangle */
+    line(200, 80,  350, 280);
+    line(350, 280, 50,  280);
+    line(50,  280, 200, 80);
+
+    /* Rectangle outline */
+    setcolor(GREEN);
+    rectangle(400, 100, 580, 260);
+
+    outtextxy(10, 10, "Flood Fill Demo");
+    outtextxy(10, 20, "Filling triangle and rectangle...");
+
+    delay(1000);
+
+    /*
+     * Flood fill inside the triangle.
+     * Seed point (200, 200) is inside the triangle.
+     * old_color = BLACK (background), new_color = MAGENTA
+     */
+    floodFill4(200, 200, BLACK, MAGENTA);
+
+    /*
+     * Flood fill inside the rectangle.
+     * Seed point (490, 180) is inside the rectangle.
+     * old_color = BLACK (background), new_color = LIGHTBLUE
+     */
+    floodFill4(490, 180, BLACK, LIGHTBLUE);
+
+    outtextxy(10, 30, "Done! Press any key.");
+    getch();
+
+    closegraph();
+    return 0;
+}
